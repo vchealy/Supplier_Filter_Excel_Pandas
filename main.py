@@ -29,7 +29,25 @@ def main_function():
     header()
     # Separate out the TOCs
     # Import the excel sheet
-    df = pd.read_excel('raw.xlsx')
+    choice = input('Live/Ops (LO), Live/Spares (LS), Staging/Ops (SO) or Staging/Spares (SS)? \n').lower()
+    if choice == 'lo':
+        fileis = 'live_operational.xlsx'
+        folder = 'live_operational'
+    elif choice == 'ls':
+        fileis = 'live_spares.xlsx'
+        folder = 'live_spares'
+    elif choice == 'so':
+        fileis = 'staging_operational.xlsx'
+        folder = 'staging_operational'
+    elif choice == 'ss':
+        fileis = 'staging_spares.xlsx'
+        folder = 'staging_spares'
+    else:
+        fileis = 'raw.xlsx'
+
+
+
+    df = pd.read_excel(fileis)
     df.columns = df.columns.str.replace(' ','_') # Sort column headers with spaces
 
     # Iterate through each TOC
@@ -42,6 +60,10 @@ def main_function():
         for sup in SUPPLIERS:
             # Create TOC datestamped folder
             dir = path.join(my_path, the_day, item)
+            if not path.exists(dir):
+                mkdir(dir)
+            # Create TOC Type folder
+            dir = path.join(my_path, the_day, item, folder)
             if not path.exists(dir):
                 mkdir(dir)
             newdf = newdf[newdf.Supplier == sup]
